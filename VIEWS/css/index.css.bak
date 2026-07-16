@@ -1,0 +1,525 @@
+ html{
+    scroll-behavior: smooth;
+}
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fefcf7;
+            color: #1e2a2e;
+            scroll-behavior: smooth;
+        }
+        header{
+    background: #8dceb4;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 1);
+}
+
+
+#sessao{
+    background: #5e6b66;
+    height: 599px;
+    background-image: url(/imgs/231.jpg);
+    
+}
+
+#sessao h2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 300px;
+    font-size: 36px;
+    color: white;
+    font-weight: 700;
+    
+}
+
+.hero{
+    background: linear-gradient(135deg, rgba(11, 137, 105, 0.92), rgba(13, 141, 71, 0.85)), 
+    url('')center/cover;
+    background-blend-mode: overlay;
+    padding: 100px 0;
+    text-align: center;
+    color: var(--branco);
+}
+.hero h2{
+    font-size: 3rem;
+    font-weight: 800;
+}
+.hero .slogan{
+    font-size: 1.4rem;
+    margin: 20px 0;
+    font-weight: 500;
+}
+
+
+
+
+@media (max-width: 768px){
+     .welcome-title {
+               font-size: 2rem;
+          }
+}
+        /* container padrão */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+          
+        }
+
+        /* header sofisticado, porém simples */
+        .navbar{
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+        padding: 16px 0;
+           flex-wrap: wrap;
+        }
+        .logo h1 {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #2c5f4b;
+        }
+
+        .logo p {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #7f8c7a;
+            margin-top: 4px;
+        }
+        .logo img{
+            max-width: 100%;
+        }
+        .titulo{
+            text-align:center;
+            flex: 30%;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #2c3e2f;
+            font-weight: 500;
+            transition: color 0.2s;
+            padding: 10px 15px;
+        }
+
+        #botao{
+            background: green;
+            padding: 20px 16px ;
+            text-decoration: none;
+            border-radius: 15px;
+        }
+
+        .nav-links a:hover {
+            color: #2c5f4b;
+        }
+
+        /* seção hero com fotos da farmácia (galeria simples) */
+        .hero {
+            margin: 48px 0 32px 0;
+        }
+
+        .farmacia-galeria {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card-foto {
+            flex: 1 1 280px;
+            background: #fff;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.05);
+            transition: transform 0.25s ease;
+        }
+
+        .card-foto:hover {
+            transform: translateY(-6px);
+        }
+
+        .card-foto img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+        @media(max-width: 768px){
+    .nav-links{
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: var(--azul);
+        padding: 20px;
+        gap: 20px;
+    }
+    .nav-links.active{
+        display: flex;
+    }
+    .menu-icon{
+        display: block;
+    }
+    .hero h2{
+        font-size: 2rem;
+    }
+    .hero img{
+        z-index: 000;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+    .titulo{
+        font-size: 1.8rem;
+    }
+}
+
+        .legenda {
+            padding: 16px;
+            text-align: center;
+            font-weight: 500;
+            color: #2c5f4b;
+            background: #ffffff;
+        }
+
+        
+        .sobre {
+            background-color: #f4f1ea;
+            border-radius: 48px;
+            padding: 48px 32px;
+            margin: 48px 0;
+        }
+
+        .sobre h2, .medicamentos h2, .info-extra h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #2c5f4b;
+            border-left: 5px solid #d9c7a7;
+            padding-left: 20px;
+        }
+
+        .sobre-texto {
+            font-size: 1.08rem;
+            line-height: 1.5;
+            color: #2d3e3a;
+            max-width: 800px;
+        }
+
+        
+        .medicamentos {
+            margin: 60px 0;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .med-card {
+            background: white;
+            width: 260px;
+            border-radius: 32px;
+            padding: 20px 18px 24px 18px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+            text-align: center;
+            border: 1px solid #ede6db;
+        }
+
+        .med-card:hover {
+            box-shadow: 0 20px 35px rgba(44, 95, 75, 0.1);
+            border-color: #d0c0a6;
+        }
+
+        .med-icon {
+            font-size: 2.8rem;
+            color: #2c5f4b;
+            margin-bottom: 12px;
+        }
+
+        .med-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+       .med-desc {
+            font-size: 0.9rem;
+            color: #5e6b66;
+            margin: 12px 0;
+            line-height: 1.4;
+        }
+
+        .preco {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #1f543f;
+            margin: 12px 0;
+        }
+
+        .btn-detalhe {
+            background: transparent;
+            border: 1.5px solid #c0b28a;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #2c5f4b;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-detalhe:hover {
+            background: #2c5f4b;
+            color: white;
+            border-color: #2c5f4b;
+        }
+
+        /* info extra - mais coisas sobre a farmácia */
+        .info-extra {
+            background: linear-gradient(135deg, #fefbf5 0%, #faf7f0 100%);
+            border-radius: 48px;
+            padding: 50px 32px;
+            margin: 40px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: space-between;
+        }
+
+        .info-box {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 12px;
+        }
+        .info-box i {
+            font-size: 2.5rem;
+            color: #4b7b64;
+            margin-bottom: 16px;
+        }
+
+        .info-box h4 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .info-box p {
+            color: #4a5c56;
+            line-height: 1.4;
+        }
+
+        /* rodapé */
+        footer {
+            background-color: #1e2f2a;
+            color: #e2ddd0;
+            padding: 48px 0 24px;
+            border-radius: 32px 32px 0 0;
+            margin-top: 40px;
+        }
+
+        .footer-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .footer-col h3 {
+            font-family: 'Playfair Display', serif;
+            color: #e6d5b8;
+            margin-bottom: 16px;
+            font-size: 1.3rem;
+        }
+
+        .footer-col p, .footer-col a {
+            color: #cdd6cf;
+            text-decoration: none;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .footer-col i {
+            margin-right: 10px;
+            width: 24px;
+        }
+
+        .social-icons {
+            margin-top: 16px;
+        }
+
+        .social-icons a {
+            display: inline-block;
+            margin-right: 18px;
+            font-size: 1.4rem;
+            color: #ebddbc;
+            transition: 0.2s;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #3b544b;
+            font-size: 0.8rem;
+        }
+
+        /* modal simples (para explicar card) */
+        .modal {
+          display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #fffef7;
+            max-width: 380px;
+            width: 90%;
+            padding: 28px;
+            border-radius: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .modal-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #2c5f4b;
+        }
+
+        .modal-content button {
+            margin-top: 20px;
+            background: #2c5f4b;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        /* responsividade */
+        @media (max-width: 760px) {
+            .navbar {
+                flex-direction: column;
+                gap: 16px;
+            }
+            .sobre h2, .medicamentos h2, .info-extra h2 {
+                font-size: 1.6rem;
+            }
+            .footer-grid {
+                flex-direction: column;
+                text-align: center;
+            }
+            .info-extra {
+                flex-direction: column;
+            }
+        }
+
+
+        #botao{
+            background: green;
+            padding: 20px 16px;
+            border-radius: 20px;
+            color: #fff;
+
+        }
+
+
+        
+
+
+        #titulo{
+            
+            align-items: center;
+            justify-content: center;
+           
+        }
+
+          #titulo h1{
+
+     
+            padding-bottom: 100px;
+            
+
+          }
+
+           /* Cadastramento de Clientes */
+
+
+          #contato{
+            height: 400px;
+            
+          
+          }
+
+          #contato form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #contato form input, #contato form textarea {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .botao {
+            display: inline-block;
+            background: rgb(18, 158, 18);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .botao:hover{
+            background: green;
+            border: 1px solid  rgb(9, 150, 9);
+            color: white;
+            transition: 1s;
+          }
+
+        h3 {
+            text-align: center;
+            color: black; 
+            font-size: 30px;
+        }
+
+       

@@ -1,0 +1,170 @@
+GUIA DE INSTALAÇÃO E EXECUÇÃO
+
+Se estás a ler isto, é porque o projeto está no vosso PC e precisam
+de o pôr a funcionar. Sigam os passos exatamente como estão aqui.
+Sem pressa, sem pular etapas.
+
+
+═══════════════════════════════════════════════════════════
+PASSO 1 — LIGAR O XAMPP
+═══════════════════════════════════════════════════════════
+
+Abram o XAMPP Control Panel e cliquem em "Start" nos dois:
+  - Apache
+  - MySQL
+
+Se o MySQL não ligar, é porque já têm outro MySQL instalado.
+
+═══════════════════════════════════════════════════════════
+PASSO 2 — BASE DE DADOS (ESCOLHEM UMA OPÇÃO)
+═══════════════════════════════════════════════════════════
+
+Antes de mais, se o vosso PC já tem uma base de dados antiga
+e defeituosa do projeto, APAGUEM primeiro no phpMyAdmin.
+Depois escolham uma das opções abaixo.
+
+── OPÇÃO A (RECOMENDADA) — USAR O BACKUP ──
+
+O backup da BD foi extraído hoje e contém todos os dados atuais.
+Ficheiro: backups/backup.sql
+
+Passos:
+  1. Abram http://localhost/phpmyadmin
+  2. Cliquem em "Novo" (menu à esquerda)
+  3. Nome da base de dados: sgf
+  4. Collation: utf8mb4_unicode_ci
+  5. Cliquem em "Criar"
+  6. Com a base de dados sgf selecionada, vão ao separador "Importar"
+  7. Escolham o ficheiro backup.sql
+  8. Cliquem em "Executar"
+Pronto. Dados todos no sítio, sem erro.
+
+── OPÇÃO B — EXECUTAR O SCRIPT COMPLETO ──
+
+Se preferirem criar tudo do zero com o script completo
+(não o diagrama .mwb, mas sim o ficheiro .sql com os INSERTs):
+
+  1. Abram BANCO DE DADOS/BD.sql (ou o script completo)
+  2. Abram http://localhost/phpmyadmin
+  3. Cliquem em "SQL" (separador no topo)
+  4. Colem todo o conteúdo do ficheiro
+  5. Cliquem em "Executar"
+
+Isto cria as tabelas e insere os dados de teste todos de uma vez.
+
+
+═══════════════════════════════════════════════════════════
+PASSO 3 — CONFIGURAR A CONEXÃO
+═══════════════════════════════════════════════════════════
+
+Abram o ficheiro: MODEL/DAO/conexao.php
+
+Verifiquem estas linhas:
+  private $host = "localhost";
+  private $dbname = "sgf";
+  private $username = "root";
+  private $password = "";       ← Atenção aqui!
+
+Se o MySQL do vosso PC NÃO TEM SENHA (padrão do XAMPP):
+  - Deixem a password vazia ("")
+
+Se o MySQL do vosso PC TEM SENHA:
+  - Escrevam a vossa senha aqui
+  - Exemplo: private $password = "minhasenha";
+
+Se der erro "Não foi possível ligar a base de dados":
+  - Abram o XAMPP e vejam se o MySQL está a rodar
+  - Verifiquem se a base de dados "sgf" existe no phpMyAdmin - esse phpMyAdmin é o mesmo que usar Mysql, só que online
+  - Confirmem que o utilizador é "root" e a senha está correta
+
+
+═══════════════════════════════════════════════════════════
+PASSO 4 — INTERNET LIGADA (OBRIGATÓRIO)
+═══════════════════════════════════════════════════════════
+
+O projeto usa Bootstrap e Bootstrap Icons via CDN (links online).
+Sem internet, os ícones não aparecem e o layout quebra.
+
+Verifiquem se estão online antes de testar. Os CDNs usados:
+  - Bootstrap 5 (CSS e JS)
+  - Bootstrap Icons
+  - Font Awesome (na página pública)
+  - Google Fonts (Inter)
+
+
+═══════════════════════════════════════════════════════════
+PASSO 5 — ACEDER AO SISTEMA
+═══════════════════════════════════════════════════════════
+
+Coloquem a pasta do projeto em:
+  C:\xampp\htdocs\FARMA_LAMIA\
+
+No navegador, acedam:
+  http://localhost/FARMA_LAMIA/VIEWS/
+
+Credenciais de acesso:
+  Administrador:  admin / Admin@2026
+  Farmacêutico:   farmaceutico / Farma@2026
+
+O atendente não tem conta criada por padrão.
+Para criar, entrem como Admin → Utilizadores → Novo Utilizador.
+
+
+═══════════════════════════════════════════════════════════
+PASSO 6 — TESTES
+═══════════════════════════════════════════════════════════
+
+Agora é testar tudo. Façam testes em massa:
+
+  - Login com os 2 utilizadores
+  - Login com dados errados (tem de dar erro)
+  - Logout (modal de confirmação)
+  - CRUD de medicamentos (cadastrar, editar, ver, excluir)
+  - CRUD de clientes
+  - PDV (adicionar itens ao carrinho, finalizar venda)
+  - Verificar se os níveis de acesso funcionam
+    (Atendente não pode ver fornecedores, etc.)
+  - Testar no telemóvel (layout responsivo)
+  - Fechar modais clicando fora e com tecla ESC
+
+
+═══════════════════════════════════════════════════════════
+REGRAS IMPORTANTES DURANTE OS TESTES
+═══════════════════════════════════════════════════════════
+
+  ❌ NÃO tentem resolver erros enquanto estão a testar
+  ✅ APONTEM o erro no caderno e continuem
+  ✅ Depois de testar tudo, voltem e resolvam com calma
+
+  Isto evita que percam tempo a debugar uma coisa
+  enquanto há mais 10 erros por descobrir.
+
+
+═══════════════════════════════════════════════════════════
+O QUE ESTUDAR
+═══════════════════════════════════════════════════════════
+
+Antes de mexerem no código, estudem a arquitetura:
+  - Como o controller chama a DAO
+  - Como a DAO usa a conexão
+  - Como os DTOs transportam os dados
+  - Como as views usam os controllers
+  - Padrão MVC na prática
+
+Os CRUDs estão todos no mesmo padrão. Se entenderem um,
+entendem todos. Não tem segredo.
+
+
+═══════════════════════════════════════════════════════════
+CONTACTO PARA ERROS
+═══════════════════════════════════════════════════════════
+
+Se encontrarem algum bug ou erro:
+  - Apontem no caderno com a descrição do erro
+  - Tirem print do ecrã se possível
+  - Enviem para mim OU resolvam com calma depois
+
+Vocês conseguem. Confio em vocês.
+
+— Nathan
+05:22 AM ... preciso dormir, Meu Deus 6h codando!

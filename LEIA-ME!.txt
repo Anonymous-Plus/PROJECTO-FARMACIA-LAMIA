@@ -1,0 +1,55 @@
+LEIA-ME
+
+Fala, Engenheiros. Seguinte:
+
+Refiz o projeto do zero. O antigo tinha muitos erros silenciosos que
+iam dar dor de cabeça depois. Comecei do zero, 100% prático, tudo
+funcional. Mas vocês vão ter que estudar o código, não tem atalho.
+TUDO QUE VOU FAZER NESSE PROJECTO RESUMIREI AQUI, VOU REUTILIZAR A VOSSA IDEA PARA NÃO ME MARTELIZAR MUITO OU PERDER TEMPO.
+LEIAM TAMBÉM O OUTRO LEIA-ME É OURO!
+
+ESTRUTURA:
+- controller/ → Lógica do sistema (Auth, CRUDs)
+- MODEL/DAO/ → Base de dados (conexão e queries)
+- MODEL/DTO/ → Objetos (getters/setters)
+- VIEWS/Admin/ → Painel do Administrador
+- VIEWS/Farmaceutico/ → Painel do Farmacêutico
+- VIEWS/Atendente/ → Painel do Atendente
+
+NÍVEIS DE ACESSO:
+- Administrador → Tudo
+- Farmaceutico → Tudo menos utilizadores
+- Atendente → PDV, medicamentos (consulta), clientes
+
+CREDENCIAIS:
+- admin / Admin@2026
+- farmaceutico / Farma@2026
+- Atendente → Criar via painel Admin
+
+O QUE TEM:
+- Login com modal (username, não email)
+- Logout com confirmação
+- PDV funcional (carrinho, cliente, pagamento)
+- CRUD completo: medicamentos, clientes, fornecedores,
+  funcionários, categorias, utilizadores
+- Dashboard com cards e alertas de stock
+- Relatórios com estatísticas
+- Busca em tempo real nas tabelas
+- Modais animados (cadastro, edição, exclusão)
+- Tudo responsivo (telemóvel, tablet, desktop)
+
+O QUE FALTA (se quiserem melhorar):
+- Receitas (não tem controller)
+- Esqueci senha (não tem tabela para tokens)
+- Integração real dos formulários com a BD
+  (estão com simulação, vocês ligam aos controllers) - pensei bem, e liguei já alguns controllers, testam todas as funções.
+
+IMPORTANTE:
+- Executem o SQL que está na pasta BANCO DE DADOS / ou melhor executem o sql que está na pasta de backups porque virá já com dados reais
+- Configurem a conexão em MODEL/DAO/conexao.php / removam a senha caso na vossa maquina não haja.
+- Os formulários estão prontos, só ligar aos controllers
+- Sem preguiça, leiam o código e entendam o padrão - mas não aconselho ninguém ler, é muito código, escrevi durante 6h
+
+São 05:22. Tá feito. Estudem. A SORTE É PARA QUEM NÃO ESTUDA.
+
+— Dev. Nathan. MORREU QUEM NÃO TENTOU!

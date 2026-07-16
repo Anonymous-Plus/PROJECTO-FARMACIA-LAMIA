@@ -1,0 +1,807 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario'])) { header('Location: ../../index.php?erro=nao_autenticado'); exit; }
+$usuario = $_SESSION['usuario']; $nivel = $usuario['nivel'];
+if (!in_array($nivel, ['Administrador', 'Farmaceutico'])) { header('Location: index.php'); exit; }
+$paginaAtual = basename($_SERVER['PHP_SELF']); $titulo = 'Categorias';
+
+require_once '../../CONTROLLER/CategoriaController.php';
+$controller = new CategoriaController();
+$lista = $controller->listar()['data'] ?? [];
+?>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmácia Lâmia | <?php echo $titulo; ?></title>
+    <link rel="shortcut icon" href="../imgs/logo.jpeg" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --sidebar-bg: #1a2b3c;
+            --sidebar-hover: #233446;
+            --sidebar-active: #2c5f4b;
+            --topbar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-dark: #1a1a2e;
+            --text-muted: #6c757d;
+            --text-light: #ffffff;
+            --primary: #2c5f4b;
+            --primary-dark: #1f4d3f;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --border: #e9ecef;
+            --shadow: 0 2px 10px rgba(0,0,0,0.08);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: var(--text-light);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-logo {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .sidebar-logo h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #8dceb4;
+            margin: 0;
+        }
+
+        .sidebar-logo span {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.5);
+            display: block;
+            margin-top: 2px;
+        }
+
+        .sidebar-user {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-user img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .sidebar-user-info { flex: 1; }
+
+        .sidebar-user-info .nome {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .sidebar-user-info .nivel {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 0.75rem 0;
+        }
+
+        .sidebar-nav ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar-nav li { margin: 2px 0; }
+
+        .sidebar-nav li a {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav li a:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-nav li a.active {
+            background: rgba(44, 95, 75, 0.2);
+            color: #8dceb4;
+            border-left-color: #8dceb4;
+        }
+
+        .sidebar-nav li a i { font-size: 1.2rem; width: 24px; text-align: center; }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-footer a:hover { color: #ff6b6b; }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* ========== TOPBAR ========== */
+        .topbar {
+            background: var(--topbar-bg);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 1rem; }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-dark);
+        }
+
+        .topbar-search {
+            position: relative;
+            width: 300px;
+        }
+
+        .topbar-search input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            font-size: 0.85rem;
+            background: var(--bg);
+            transition: var(--transition);
+        }
+
+        .topbar-search input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(44, 95, 75, 0.1);
+        }
+
+        .topbar-search i {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .topbar-right { display: flex; align-items: center; gap: 1.5rem; }
+
+        .topbar-notification {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .topbar-notification .badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background: var(--danger);
+            color: #fff;
+            font-size: 0.6rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .topbar-user img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .topbar-user span { font-weight: 600; font-size: 0.85rem; }
+
+        /* ========== PAGE CONTENT ========== */
+        .page-content { padding: 2rem; }
+
+        .page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .page-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
+
+        /* ========== BOTÕES ========== */
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(44,95,75,0.3); }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-warning { background: var(--warning); color: #000; }
+        .btn-xs { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+
+        /* ========== TABELA ========== */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .table-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 { font-size: 1.1rem; font-weight: 600; margin: 0; }
+
+        table { width: 100%; border-collapse: collapse; }
+        table th, table td { padding: 0.9rem 1.5rem; text-align: left; font-size: 0.85rem; }
+        table th { background: var(--bg); font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+        table tr { border-bottom: 1px solid var(--border); }
+        table tr:last-child { border-bottom: none; }
+        table tr:hover { background: rgba(44, 95, 75, 0.03); }
+        .acoes { display: flex; gap: 0.3rem; }
+
+        /* ========== MODAIS ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal {
+            background: #fff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            transform: translateY(30px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+
+        .modal-overlay.active .modal { transform: translateY(0) scale(1); }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 { font-size: 1.3rem; font-weight: 700; color: var(--text-dark); margin: 0; }
+
+        .modal-close {
+            background: #f5f5f5;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #666;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover { background: var(--danger); color: #fff; transform: rotate(90deg); }
+
+        .modal-body { padding: 2rem; }
+
+        .modal-footer {
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.85rem; color: var(--text-dark); margin-bottom: 0.4rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--border); border-radius: 10px; font-size: 0.9rem; font-family: 'Inter', sans-serif; transition: all 0.3s; resize: vertical; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(44,95,75,0.1); }
+
+        .delete-modal .modal { max-width: 420px; text-align: center; }
+        .delete-icon { font-size: 3rem; color: var(--danger); margin-bottom: 1rem; }
+        .delete-modal .modal-body h4 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-dark); }
+        .delete-modal .modal-body p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 2000;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.error { background: var(--danger); }
+
+        /* ========== RESPONSIVO ========== */
+        @media (max-width: 992px) {
+            .sidebar { left: -260px; }
+            .sidebar.open { left: 0; }
+            .main-content { margin-left: 0; }
+            .menu-toggle { display: block; }
+            .topbar-search { width: 200px; }
+        }
+
+        @media (max-width: 576px) {
+            .topbar { padding: 1rem; }
+            .topbar-search { display: none; }
+            .page-content { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <h2>FARMÁCIA LÂMIA</h2>
+            <span>Painel Administrativo</span>
+        </div>
+        <div class="sidebar-user">
+            <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($usuario['username']); ?>&background=2c5f4b&color=fff" alt="Avatar">
+            <div class="sidebar-user-info">
+                <div class="nome"><?php echo htmlspecialchars($usuario['username']); ?></div>
+                <div class="nivel"><?php echo htmlspecialchars($nivel); ?></div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.php"><i class="bi bi-grid-fill"></i> Dashboard</a></li>
+                <li><a href="medicamentos.php"><i class="bi bi-capsule"></i> Medicamentos</a></li>
+                <?php if (in_array($nivel, ['Administrador', 'Farmaceutico'])): ?>
+                <li><a href="fornecedores.php"><i class="bi bi-truck"></i> Fornecedores</a></li>
+                <?php endif; ?>
+                <li><a href="vendas.php"><i class="bi bi-cart4"></i> Vendas</a></li>
+                <li><a href="clientes.php"><i class="bi bi-people-fill"></i> Clientes</a></li>
+                <?php if (in_array($nivel, ['Administrador', 'Farmaceutico'])): ?>
+                <li><a href="funcionarios.php"><i class="bi bi-person-badge"></i> Funcionários</a></li>
+                <li><a href="categorias.php" class="active"><i class="bi bi-tags"></i> Categorias</a></li>
+                <?php endif; ?>
+                <?php if ($nivel === 'Administrador'): ?>
+                <li><a href="utilizadores.php"><i class="bi bi-shield-lock"></i> Utilizadores</a></li>
+                <?php endif; ?>
+                <?php if (in_array($nivel, ['Administrador', 'Farmaceutico'])): ?>
+                <li><a href="relatorios.php"><i class="bi bi-graph-up"></i> Relatórios</a></li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="#" onclick="abrirModalLogout()"><i class="bi bi-box-arrow-left"></i> Terminar Sessão</a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle"><i class="bi bi-list"></i></button>
+                <div class="topbar-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Pesquisar categorias...">
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-notification">
+                    <i class="bi bi-bell"></i>
+                    <span class="badge"><?php echo count($lista); ?></span>
+                </div>
+                <div class="topbar-user">
+                    <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($usuario['username']); ?>&background=2c5f4b&color=fff" alt="Avatar">
+                    <span><?php echo htmlspecialchars($usuario['username']); ?></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+            <div class="page-header">
+                <div>
+                    <h1><i class="bi bi-tags"></i> <?php echo $titulo; ?></h1>
+                    <p>Gerir categorias de medicamentos</p>
+                </div>
+                <button class="btn btn-primary" onclick="abrirModalCadastro()"><i class="bi bi-plus-lg"></i> Nova Categoria</button>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Todas as Categorias (<?php echo count($lista); ?>)</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaBody">
+                        <?php foreach($lista as $c): ?>
+                        <tr data-id="<?php echo $c->getIdCategoria(); ?>">
+                            <td><strong><?php echo htmlspecialchars($c->getNomeCategoria()); ?></strong></td>
+                            <td><?php echo htmlspecialchars($c->getDescricao() ?: '—'); ?></td>
+                            <td class="acoes">
+                                <button class="btn btn-warning btn-xs" onclick="abrirModalEdicao(<?php echo $c->getIdCategoria(); ?>, '<?php echo htmlspecialchars(addslashes($c->getNomeCategoria())); ?>', '<?php echo htmlspecialchars(addslashes($c->getDescricao())); ?>')"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-danger btn-xs" onclick="abrirModalExclusao(<?php echo $c->getIdCategoria(); ?>, '<?php echo htmlspecialchars(addslashes($c->getNomeCategoria())); ?>')"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php if (count($lista) == 0): ?>
+                        <tr>
+                            <td colspan="3" style="text-align:center; padding:2rem; color:var(--text-muted);">
+                                <i class="bi bi-inbox" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
+                                Nenhuma categoria cadastrada.
+                            </td>
+                        </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO / EDIÇÃO -->
+    <div class="modal-overlay" id="modalCadastro">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTituloCategoria">Nova Categoria</h3>
+                <button class="modal-close" onclick="fecharModal('modalCadastro')"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCategoria">
+                    <input type="hidden" id="categoriaId">
+                    <div class="form-group">
+                        <label>Nome da Categoria <span style="color:var(--danger);">*</span></label>
+                        <input type="text" id="nomeCategoria" placeholder="Ex: Analgésicos" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <textarea id="descricao" rows="3" placeholder="Breve descrição da categoria..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="fecharModal('modalCadastro')" style="background:#e9ecef; color:var(--text-dark);">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarCategoria()"><i class="bi bi-check-lg"></i> Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE EXCLUSÃO -->
+    <div class="modal-overlay delete-modal" id="modalExclusao">
+        <div class="modal">
+            <div class="modal-body" style="padding:2.5rem;">
+                <div class="delete-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                <h4>Confirmar Exclusão</h4>
+                <p>Tem certeza que deseja excluir a categoria <strong id="nomeExcluir"></strong>?</p>
+                <p style="color:var(--danger); font-size:0.8rem; margin-top:0.5rem;">Esta ação não pode ser desfeita!</p>
+            </div>
+            <div class="modal-footer" style="justify-content:center; border-top:none; padding-top:0;">
+                <button class="btn" onclick="fecharModal('modalExclusao')" style="background:#e9ecef; color:var(--text-dark);">Cancelar</button>
+                <button class="btn btn-danger" id="btnConfirmarExclusao"><i class="bi bi-trash"></i> Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE LOGOUT -->
+    <div class="modal-overlay" id="modalLogout">
+        <div class="modal" style="max-width:420px; text-align:center;">
+            <div class="modal-body" style="padding:2.5rem;">
+                <div style="font-size:3rem; color:var(--danger); margin-bottom:1rem;"><i class="bi bi-box-arrow-right"></i></div>
+                <h4 style="font-size:1.2rem; margin-bottom:0.5rem; color:var(--text-dark);">Terminar Sessão</h4>
+                <p style="color:var(--text-muted); font-size:0.9rem;">Tem certeza que deseja sair do sistema?</p>
+                <div style="display:flex; gap:1rem; justify-content:center; margin-top:2rem;">
+                    <button class="btn" onclick="fecharModal('modalLogout')" style="background:#e9ecef; color:var(--text-dark);">Cancelar</button>
+                    <a href="../../logout.php" class="btn btn-danger" style="text-decoration:none;"><i class="bi bi-box-arrow-right"></i> Sair</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ========== NAVEGAÇÃO E UI ==========
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 992 && !sidebar.contains(e.target) && e.target !== menuToggle) {
+            sidebar.classList.remove('open');
+        }
+    });
+
+    // ========== MODAIS ==========
+    function abrirModalCadastro() {
+        document.getElementById('modalTituloCategoria').textContent = 'Nova Categoria';
+        document.getElementById('formCategoria').reset();
+        document.getElementById('categoriaId').value = '';
+        document.getElementById('modalCadastro').classList.add('active');
+    }
+
+    function abrirModalEdicao(id, nome, descricao) {
+        document.getElementById('modalTituloCategoria').textContent = 'Editar Categoria #' + id;
+        document.getElementById('categoriaId').value = id;
+        document.getElementById('nomeCategoria').value = nome;
+        document.getElementById('descricao').value = descricao;
+        document.getElementById('modalCadastro').classList.add('active');
+    }
+
+    function abrirModalExclusao(id, nome) {
+        document.getElementById('nomeExcluir').textContent = nome;
+        document.getElementById('btnConfirmarExclusao').onclick = () => excluirCategoria(id);
+        document.getElementById('modalExclusao').classList.add('active');
+    }
+
+    function abrirModalLogout() {
+        document.getElementById('modalLogout').classList.add('active');
+    }
+
+    function fecharModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+
+    // ========== CRUD REAL ==========
+    
+    /**
+     * SALVAR CATEGORIA (CREATE/UPDATE)
+     */
+    function salvarCategoria() {
+        const nome = document.getElementById('nomeCategoria').value.trim();
+        const descricao = document.getElementById('descricao').value.trim();
+        
+        if (!nome) {
+            mostrarToast('Preencha o nome da categoria!', true);
+            return;
+        }
+
+        const id = document.getElementById('categoriaId').value;
+        const dados = {
+            nomeCategoria: nome,
+            descricao: descricao
+        };
+
+        if (id) {
+            // UPDATE
+            dados.idCategoria = parseInt(id);
+            enviarRequisicao('atualizar', dados, 'atualizada');
+        } else {
+            // CREATE
+            enviarRequisicao('cadastrar', dados, 'cadastrada');
+        }
+    }
+
+    /**
+     * EXCLUIR CATEGORIA (DELETE)
+     */
+    function excluirCategoria(id) {
+        enviarRequisicao('apagar', { id: id }, 'excluída', true);
+    }
+
+    /**
+     * ENVIAR REQUISIÇÃO AJAX
+     */
+    function enviarRequisicao(action, dados, acaoNome, isDelete = false) {
+        // Mostra loading no botão
+        const btnSalvar = document.querySelector('#modalCadastro .btn-primary');
+        if (btnSalvar && !isDelete) {
+            btnSalvar.disabled = true;
+            btnSalvar.innerHTML = '<i class="bi bi-hourglass-split"></i> Salvando...';
+        }
+
+        fetch('../../CONTROLLER/CategoriaController.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: action,
+                ...dados
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Restaura botão
+            if (btnSalvar && !isDelete) {
+                btnSalvar.disabled = false;
+                btnSalvar.innerHTML = '<i class="bi bi-check-lg"></i> Salvar';
+            }
+
+            if (data.success) {
+                fecharModal(isDelete ? 'modalExclusao' : 'modalCadastro');
+                mostrarToast(`Categoria ${acaoNome} com sucesso!`);
+                
+                if (isDelete) {
+                    // Remove a linha da tabela
+                    const row = document.querySelector(`tr[data-id="${dados.id}"]`);
+                    if (row) row.remove();
+                    
+                    // Atualiza contador
+                    atualizarContador();
+                } else {
+                    // Recarrega a página após 1 segundo
+                    setTimeout(() => location.reload(), 1000);
+                }
+            } else {
+                mostrarToast('Erro: ' + (data.message || 'Erro desconhecido'), true);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            if (btnSalvar && !isDelete) {
+                btnSalvar.disabled = false;
+                btnSalvar.innerHTML = '<i class="bi bi-check-lg"></i> Salvar';
+            }
+            mostrarToast('Erro de conexão com o servidor!', true);
+        });
+    }
+
+    /**
+     * ATUALIZA CONTADOR DE CATEGORIAS
+     */
+    function atualizarContador() {
+        const total = document.querySelectorAll('#tabelaBody tr').length;
+        const contador = document.querySelector('.table-header h3');
+        if (contador) {
+            contador.textContent = `Todas as Categorias (${total})`;
+        }
+        const badge = document.querySelector('.topbar-notification .badge');
+        if (badge) {
+            badge.textContent = total;
+        }
+    }
+
+    // ========== TOAST ==========
+    function mostrarToast(msg, erro = false) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast ' + (erro ? 'error' : '');
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ========== FECHAR MODAIS ==========
+    document.querySelectorAll('.modal-overlay').forEach(o => {
+        o.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        }
+    });
+</script>
+</body>
+</html>
